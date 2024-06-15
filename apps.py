@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class SisCadastrosConfig(AppConfig):
+class CoreCadastrosConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'sis_cadastros'
+    name = 'core_cadastros'
