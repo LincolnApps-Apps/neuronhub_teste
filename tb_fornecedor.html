@@ -1,0 +1,163 @@
+{% include 'includes/navbar.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>One Lincoln - Clientes</title>
+        <link rel="stylesheet" href="{% static 'css/tabelas.css' %}">
+        <link rel="stylesheet" href="{% static 'css/pop_up.css' %}">
+        <style></style>
+        <script src="{% static 'js/cadastro.js' %}"></script>
+    </head>
+    <body>
+
+        <div id="pop_up_filtro" class="overlay">
+            <div class="popUp" style="top: 50%;left: 50%;">
+                <h1>Filtrar</h1>
+                <div class="linha_popUp">
+                    <select style="width: 15%;" id="tipo">
+                        <option value="">Tipo</option>
+                        <option value="Fisica">Fisica</option>
+                        <option value="Juridica">Juridica</option>
+                    </select>
+                    <input style="width: 30%;" type="text" placeholder="Nome">
+                    <input style="width: 10%;" type="number" placeholder="ID">
+                    <input style="width: 20%;" type="text" id="cpf" placeholder="CPF">
+                    <input style="width: 20%;display: none;" id="cnpj" type="text" placeholder="CNPJ">
+                </div>
+                <div class="linha_popUp">
+                    <input style="width: 30%;" type="email" placeholder="Email">
+                    <input style="width: 30%;" type="text" placeholder="Endereço">
+                    <select style="width: 20%;">
+                        <option value="">Status</option>
+                        <option value="Ativo">Ativo</option>
+                        <option value="Inativo">Inativo</option>
+                    </select>
+                </div>
+                <div class="linha_popUp">
+                    <button id="fechar_popUp">Cancelar</button>
+                    <button id="confirmar_popUp">Filtrar</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="pop_up_importar" class="overlay">
+            <div class="popUp" style="top: 50%;left: 50%;">
+                <h1>Importar</h1>
+                <div class="linha_popUp" style="background-color: red;height: 10%;">
+                    <a style="width: 30%;" href="{% static 'files/modelo_cliente.xlsx' %}" download>
+                        <button style="width: 100%;background-color: rgb(95, 95, 95);height: 10%; display: flex; align-items: center; justify-content: center;"></button>
+                    </a>
+                    <input style="width: 80%;display: none;" type="file" id="arquivo" accept=".csv">
+                    <label for="arquivo" id="label_importar">
+                        <i class="fas fa-upload" style="margin-right: 10px;"></i>
+                        <span style="flex-grow: 1; text-align: center;">Selecionar arquivo</span>
+                    </label>
+                </div>
+                <div class="linha_popUp">
+                    <button id="fechar_popUp">Cancelar</button>
+                    <button id="confirmar_popUp">Importar</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="cabecalho">
+            <h1>Fornecedores</h1>
+            <div class="botao">
+                <a style="margin-left: 0;" id="importar" href="#"><i class="fas fa-file-excel"></i> Importar</a>
+                <a id="novo" href="{% url 'sis_cadastros:nv_fornecedor' schema_name=tenant_schema %}"><i class="fas fa-plus"></i> Cadastrar</a>
+                <a style="margin-right: 0;" id="filtrar" href="#"><i class="fas fa-filter"></i> Filtrar</a>
+            </div>
+        </div>
+        <table>
+            <thead>
+                <th style="width: 10%;">ID</th>
+                <th style="width: 10%;">Tipo</th>
+                <th style="width: 25%;">Nome</th>
+                <th style="width: 10%;">Status</th>
+                <th style="width: 10%;">Telefone</th>
+                <th style="width: 20%;">Endereço</th>
+                <th style="width: 10%;">Opções</th>
+            </thead>
+            <tbody>
+                <tr>
+                    <!-- <td>1</td>
+                    <td>Fisica</td>
+                    <td>Gustavo</td>
+                    <td>Ativo</td>
+                    <td>(71)9 9193-2420</td>
+                    <td>Rua das patativas, 291</td>
+                    <td>
+                        <div class="contenedor-botao">
+                            <button class="botao acao-btn" onclick="toggleDropdown('dropdown-{{ cliente.id }}')">Ação <span class="arrow">&#9660;</span></button>
+                            <div id="dropdown-{{ cliente.id }}" class="dropdown-content">
+                                <div class="dropdown-flex">
+                                    <a href="#" onclick="abrirPopUpExcluir('{{ cliente.id }}')">Excluir</a>
+                                    <a href="#">Editar</a>
+                                    <a href="#">Histórico</a>
+                                </div>    
+                            </div>
+                        </div>    
+                    </td> -->
+                </tr>
+            </tbody>
+        </table>
+
+        <script src="{% static 'js/cadastro.js' %}"></script>
+
+        <script>
+            document.querySelectorAll('th').forEach(headerCell => {
+                headerCell.addEventListener('click', () => {
+                    const tableElement = headerCell.closest('table');
+                    const column = Array.from(headerCell.parentNode.children).indexOf(headerCell);
+                    const direction = headerCell.dataset.sort || 'asc';
+                    const newDirection = direction === 'asc' ? 'desc' : 'asc';
+                    const rows = Array.from(tableElement.querySelectorAll('tbody tr'));
+
+                    rows.sort((rowA, rowB) => {
+                        const cellA = rowA.children[column].textContent.trim();
+                        const cellB = rowB.children[column].textContent.trim();
+
+                        if (!isNaN(cellA) && !isNaN(cellB)) {
+                            return cellA - cellB;
+                        }
+
+                        return cellA.localeCompare(cellB);
+                    });
+
+                    if (newDirection === 'desc') {
+                        rows.reverse();
+                    }
+
+                    rows.forEach(row => {
+                        tableElement.querySelector('tbody').appendChild(row);
+                    });
+
+                    headerCell.dataset.sort = newDirection;
+                });
+            });
+
+            // Pop-up de filtro
+            document.getElementById('filtrar').addEventListener('click', () => {
+                document.getElementById('pop_up_filtro').style.display = 'block';
+            });
+
+            document.getElementById('importar').addEventListener('click', () => {
+                document.getElementById('pop_up_importar').style.display = 'block';
+            });
+
+            //function para fechar pop-up e limpar campos
+            document.getElementById('fechar_popUp').addEventListener('click', () => {
+                document.getElementById('pop_up_filtro').style.display = 'none';
+                document.querySelectorAll('input').forEach(input => {
+                    input.value = '';
+                });
+                document.querySelectorAll('select').forEach(select => {
+                    select.value = '';
+                });
+            });
+
+        </script>
+
+    </body>
+</html>
