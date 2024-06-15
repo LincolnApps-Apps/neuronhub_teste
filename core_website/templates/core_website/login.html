@@ -1,0 +1,64 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="{% static 'css/inicial.css' %}">
+    <link rel="stylesheet" href="{% static 'css/slide.css' %}">
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            font-family: century gothic;
+            background-color: #f2f2f2;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            flex-direction: column;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar" style="box-shadow: 10px 10px 10px rgba(0,0,0,0.2);">
+        <a href="{% url 'core_website:apresentacao' %}" style="width: 20%;height: 100%;display: flex;align-items: center;justify-content: center;text-decoration: none;"><h1 style="margin-left: 5%;">Neuron Hub</h1></a>
+    </div>
+    <form method="post" class="form_login" action="{% url 'core_website:login_sucesso' %}">
+        {% csrf_token %}
+        <h2>Faça o login!</h2>
+        <p id="subtitulo1">Entre com login e senha</p>
+        
+        {% if messages %}
+            <div class="error">
+                <p>Por favor, corrija os seguintes erros:</p>
+                <ul>
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+        
+        <div class="primeiro_cadastro">
+            <div class="linha_login">
+                <input type="text" name="username" id="username" required placeholder="Email" autocomplete="off">
+            </div>
+            <div class="linha_login">
+                <input type="password" name="password" id="password" required autocomplete="off" placeholder="Senha"> 
+            </div>       
+            <div class="linha_login">
+                <button type="button" onclick="voltarPagina()">Cancelar</button>
+                <button type="submit">Entrar</button>
+            </div>
+        </div>
+    </form>
+    <script src="{% static 'js/mudar_slide.js' %}"></script>
+    <script>
+        window.onload = function() {
+            var inputs = document.querySelectorAll('input');
+            inputs.forEach(function(input) {
+                input.setAttribute('autocomplete', 'off');
+            });
+        };
+    </script>
+</body>
+</html>

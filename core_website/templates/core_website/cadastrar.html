@@ -1,0 +1,162 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="{% static 'css/inicial.css' %}">
+    <link rel="stylesheet" href="{% static 'css/slide.css' %}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            font-family: century gothic;
+            background-color: #f2f2f2;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            flex-direction: column;
+        }
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: white;
+            border: 1px solid #ccc;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar" style="box-shadow: 10px 10px 10px rgba(0,0,0,0.2);">
+        <a href="{% url 'core_website:apresentacao' %}" style="width: 20%;height: 100%;display: flex;align-items: center;justify-content: center;text-decoration: none;"><h1 style="margin-left: 5%;">Neuron Hub</h1></a>
+    </div>
+    <form method="post" class="form_inicial" action="{% url 'core_website:cadastro_novo_negocio' %}">
+        {% csrf_token %}
+        <h2>Cadastro de Novo Negócio</h2>
+        <p id="subtitulo1">Escolha o tipo do seu negócio</p>
+        <div class="slider-container"> 
+            <div class="slide active" id="slide1">
+                <div class="btn_inicial_linha">
+                    <button type="button" id="bt_fisica" onclick="mudarSlideInicial(2)">Pessoa Física</button>
+                    <button type="button" id="bt_juridica" onclick="mudarSlideInicial(2)">Pessoa Jurídica</button>
+                </div>
+            </div>
+            <div class="slide" id="slide2" style="height: 70%;">
+                <div class="primeiro_cadastro">
+                    {% if form.errors %}
+                        <div class="errorlist">
+                            <ul>
+                                {% for field, errors in form.errors.items %}
+                                    <li><strong>{{ field }}</strong>: {{ errors|join:", " }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+                    <div class="conteudo_linha">
+                        <label>Tipo:</label>
+                        <input type="text" name="tipo" id="tipo_negocio" style="color: rgb(70,70,70);" value="{{ form.tipo.value|default_if_none:'' }}" readonly>
+                    </div>
+                    <div class="conteudo_linha">
+                        <label>Nome completo:</label>
+                        <input type="text" name="nome" id="nome" required autocomplete="off" placeholder="Nome completo" value="{{ form.nome.value|default_if_none:'' }}">
+                    </div>
+                    <div class="conteudo_linha">
+                        <label id="label_cpf">CPF:</label>
+                        <label id="label_cnpj" style="display: none;">CNPJ:</label>
+                        <input type="text" name="id_nacional" id="id_nacional" required autocomplete="off" value="{{ form.id_nacional.value|default_if_none:'' }}">
+                    </div>
+                    <div class="conteudo_linha">
+                        <label>Telefone:</label>
+                        <input type="text" name="telefone" id="telefone" required autocomplete="off" placeholder="Telefone" value="{{ form.telefone.value|default_if_none:'' }}">
+                    </div>
+                    <div class="conteudo_linha">
+                        <label>Email:</label>
+                        <input type="email" name="email" id="email" required autocomplete="off" placeholder="Email" value="{{ form.email.value|default_if_none:'' }}">
+                    </div>
+                    <div class="conteudo_linha">
+                        <label>Senha:</label>
+                        <input type="password" name="senha1" id="senha1" required autocomplete="off" placeholder="Senha">
+                    </div>
+                    <div class="conteudo_linha">
+                        <label>Confirme a senha:</label>
+                        <input type="password" name="senha2" id="senha2" required autocomplete="off" placeholder="Confirme a senha">
+                    </div>
+                </div>
+            </div>
+            <div class="linha_btn">
+                <button id="volta_slide_inicial" type="button" onclick="mudarSlideInicial(1)">Voltar</button>
+                <button type="submit">Cadastrar</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Pop-up de Erro -->
+    <div class="popup-overlay" id="popup-overlay"></div>
+    <div class="popup" id="popup">
+        <p>Este e-mail já está cadastrado!</p>
+        <button onclick="fecharPopup()">Fechar</button>
+        <button onclick="login()">login</button>
+    </div>
+
+    <div class="popup-overlay" id="popup-overlay"></div>
+    <div class="popup" id="popup">
+        <p>CPF/CNPJ já está cadastrado!</p>
+        <button onclick="fecharPopup()">Fechar</button>
+        <button onclick="login()">login</button>
+    </div>
+
+    <script>
+        var emailExists = "{{ email_exists|yesno:'true,false' }}";
+        var idnacionalexists = "{{ idnacional_exists|yesno:'true,false' }}";
+
+        window.onload = function() {
+            var inputs = document.querySelectorAll('input');
+            inputs.forEach(function(input) {
+                input.setAttribute('autocomplete', 'off');
+            });
+
+            if (emailExists === "true") {
+                document.getElementById('popup-overlay').style.display = 'block';
+                document.getElementById('popup').style.display = 'block';
+            }
+
+            if (idnacionalexists === "true") {
+                document.getElementById('popup-overlay').style.display = 'block';
+                document.getElementById('popup').style.display = 'block';
+            }
+            
+        };
+
+        function login() {
+            window.location.href = "{% url 'core_website:login' %}";
+        }
+
+        function fecharPopup() {
+            document.getElementById('popup-overlay').style.display = 'none';
+            document.getElementById('popup').style.display = 'none';
+            if (emailExists === "true") {
+            mudarSlideInicial(2);
+            }
+        }
+    </script>
+
+    <script src="{% static 'js/mudar_slide.js' %}"></script>
+    <script src="{% static 'js/cadastro.js' %}"></script>
+    <script src="{% static 'js/cadastro_inicial.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,220 @@
+{% include 'includes/navbar.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>One Lincoln - Novo Fornecedor</title>
+        <link rel="stylesheet" href="{% static 'css/cadastro.css' %}">
+        <link rel="stylesheet" href="{% static 'css/slide.css' %}">
+        <link rel="stylesheet" href="{% static 'css/pop_up.css' %}">
+        <style>
+            html, body {
+                background-color: #f2f2f2;
+            }
+        </style>
+    </head>
+    <body>
+        <form id="fornecedorForm" method="POST" action="#" style="width: 100%;height: 97%;display: flex;top:5%">
+            {% csrf_token %}
+            <div class="cadastro" style="margin-top: 6%;">
+                <div class="aba_cadastro">
+                    <button style="border-radius: 10px 0 0 0;" id="button_dados" onclick="mudarSlide(1, event)">Dados</button>
+                    <button id="button_detalhes" onclick="mudarSlide(2, event)">Endereço</button>
+                    <button id="button_fiscal" onclick="mudarSlide(3, event)">Contatos</button>
+                    <button style="border-radius: 0 0 0 10px; line-height: 2;" id="button_estoque" onclick="mudarSlide(4, event)">Informações comerciais</button>
+                </div>
+                <div class="slider-container">   
+                    <h1>Cadastro de fornecedor</h1> 
+
+                    <div class="slide active" id="slide1">
+                        <div class="dados">
+                            <div style="margin-top: 1%;" class="dados_preencher">
+                                <label>Tipo</label>
+                                <select id="tipo" name="tipo_fornecedor">
+                                    <option value="1">Pessoa fisica</option>
+                                    <option value="2">Pessoa juridica</option>
+                                </select>
+                            </div>
+                            <div class="dados_preencher">
+                                <label id="label_cpf">CPF</label>
+                                <label id="label_cnpj" style="display: none;">CNPJ</label>
+                                <input id="cpf" type="text" name="cpf" autocomplete="new-password">
+                                <input id="cnpj" style="display: none;" type="text" name="cnpj" autocomplete="new-password">
+                            </div>
+                            <div class="dados_preencher">
+                                <label>Inscrição estadual</label>
+                                <input type="text" name="ins_estadual" autocomplete="new-password">
+                            </div>
+                            <div class="dados_preencher">
+                                <label id="label_nome">Nome*</label>
+                                <label id="label_rz_social" style="display: none;">Razão social*</label>
+                                <input id="nome" type="text" name="nome" autocomplete="new-password">
+                                <input id="razao_social" style="display: none;" type="text" name="razao_social" autocomplete="new-password">
+                            </div>
+                            <div class="dados_preencher">
+                                <label>Nome fantasia</label>
+                                <input type="text" id="nome_fantasia" name="nome_fantasia" autocomplete="new-password">
+                            </div>
+                            <div class="dados_preencher" style="margin-bottom: 2%;">
+                                <button type="button" id="voltar_pagina" onclick="retorno()">Cancelar</button>
+                                <button id="proximo" onclick="mudarSlide(2)">Próximo</button>
+                            </div>
+                        </div>    
+                        
+                    </div>
+
+                    <div class="slide" id="slide2">
+                        <div class="dados">
+                            <div style="margin-top: 1%;" class="dados_preencher">
+                                <label>Logradouro - Nº</label>
+                                <div style="width: 70%;height: 100%;display: flex;justify-content: space-between;align-items: center;">
+                                    <input type="text" id="rua" name="rua" style="width: 70%;"  >
+                                    <input type="text" id="numero" name="numero" style="width: 20%;">
+                                </div>    
+                            </div>
+                            <div class="dados_preencher">
+                                <label>UF - Cidade</label>
+                                <div style="width: 70%;height: 100%;display: flex;justify-content: space-between;align-items: center;">
+                                    <input type="text" id="estado" name="estado" style="width: 30%;">
+                                    <input type="text" id="cidade" name="cidade" style="width: 65%;">
+                                </div>
+                            </div>
+                            <div class="dados_preencher">
+                                <label>CEP - Bairro</label>
+                                <div style="width: 70%;height: 100%;display: flex;justify-content: space-between;align-items: center;">
+                                    <input type="text" id="cep" name="cep"  minlength="8" style="width: 30%;" required>
+                                    <input type="text" id="bairro" name="bairro" style="width: 65%;"    >
+                                </div>
+                            </div>
+                            <div class="dados_preencher">
+                                <label>Complemento</label>
+                                <input id="complemento" type="text" name="complemento" autocomplete="new-password">
+                            </div>
+                            <div class="dados_preencher" style="margin-bottom: 2%;">
+                                <button id="anterior" onclick="mudarSlide(1)">Anterior</button>
+                                <button id="proximo" onclick="mudarSlide(3)">Próximo</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="slide" id="slide3">
+                        <div class="dados">
+                            <div  style="margin-top: 1%;" class="dados_preencher">
+                                <label>Telefone</label>
+                                <input type="text" name="telefone">
+                            </div>
+                            <div class="dados_preencher">
+                                <label>Whatsapp</label>
+                                <input type="text" name="whatsapp">
+                            </div>
+                            <div class="dados_preencher">
+                                <label>Email</label>
+                                <input type="email" name="email">
+                            </div>
+                            <div class="dados_preencher" name="impostos_2">
+                                <label>Instagram</label>
+                                <input type="text" name="instagram">
+                            </div>
+                            <div class="dados_preencher" style="margin-bottom: 2%;">
+                                <button id="anterior" onclick="mudarSlide(2)">Anterior</button>
+                                <button id="proximo" onclick="mudarSlide(4)">Próximo</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="slide" id="slide4">
+                        <div class="dados">
+                            <div style="margin-top: 1%;" class="dados_preencher">
+                                <label>Avaliação de risco*</label>
+                                <select name="aval_risco">
+                                    <option value=""></option>
+                                    <option value="Alto risco">Alto risco</option>
+                                    <option value="Médio risco">Médio risco</option>
+                                    <option value="Baixo risco">Baixo risco</option>
+                                </select>
+                            </div>
+                            <div class="dados_preencher">
+                                <label>Pagamento</label>
+                                <input type="text" name="condicoes" autocomplete="new-password">
+                            </div>
+                            <div class="dados_preencher">
+                                <label>Limite de crédito</label>
+                                <input type="text" name="limite_credito" autocomplete="new-password">
+                            </div>
+                            <div class="dados_preencher">
+                                <label>Prazos de entrega</label>
+                                <input type="text" name="prazo_entrega" autocomplete="new-password">
+                            </div>
+                            <div class="dados_preencher" style="margin-bottom: 2%;">
+                                <button id="anterior" onclick="mudarSlide(3)">Anterior</button>
+                                <button id="proximo">Confirmar</button>
+                            </div>
+                        </div> 
+                    </div> 
+            </div>
+        </form>
+
+        <div class="overlay"></div>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="{% static 'js/cadastro.js' %}"></script>
+        <script src="{% static 'js/mudar_slide.js' %}"></script>
+        <script>
+            // Ativa o primeiro slide e o botão correspondente quando a página é carregada
+            mudarSlide(1);  
+            
+            function retorno() {
+                window.history.back();
+            }
+
+            $(document).ready(function() {
+                $('#fornecedorForm').submit(function(event) {
+                    event.preventDefault(); // Impede o envio padrão do formulário
+
+                    var formData = $(this).serialize(); // Serializa os dados do formulário
+
+                    $.ajax({
+                        url: "{% url 'sis_cadastros:cad_fornecedor' schema_name=tenant_schema %}",
+                        type: "POST",
+                        data: formData,
+                        success: function(response) {
+                            console.log("Dados enviados com sucesso!");
+                            // Preenche os campos do formulário com os dados da API ReceitaWS
+                            if (response.cnpj) {
+                                $('#nome').val(response.nome);
+                                $('#razao_social').val(response.nome);
+                                $('#nome_fantasia').val(response.fantasia);
+                                $('#rua').val(response.logradouro);
+                                $('#numero').val(response.numero);
+                                $('#bairro').val(response.bairro);
+                                $('#cep').val(response.cep);
+                                $('#estado').val(response.uf);
+                                $('#cidade').val(response.municipio);
+                                // Adicione outros campos conforme necessário
+                            }
+                        },
+                        error: function(xhr, errmsg, err) {
+                            console.log("Erro ao enviar os dados: " + errmsg);
+                        }
+                    });
+                });
+
+                // Mudança de CPF/CNPJ
+                $('#tipo').change(function() {
+                    var tipo = $(this).val();
+                    if (tipo == '2') {
+                        $('#label_cpf').hide();
+                        $('#cpf').hide();
+                        $('#label_cnpj').show();
+                        $('#cnpj').show();
+                    } else {
+                        $('#label_cnpj').hide();
+                        $('#cnpj').hide();
+                        $('#label_cpf').show();
+                        $('#cpf').show();
+                    }
+                });
+            });
+        </script>
+    </body>
+</html>
